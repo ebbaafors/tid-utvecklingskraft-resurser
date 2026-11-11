@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tid, Utvecklingskraft & Resurser</title>
+
+<style>
+:root {
+  --nutid: #F6E7A8;
+  --datid: #E7B8B8;
+  --framtid: #B8E2DB;
+  --text: #333333;
+  --bg: #FAF9F6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 40px 20px;
+  font-family: "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.4rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #666;
+}
+
+.cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: 320px;
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.nutid {
+  background: var(--nutid);
+}
+
+.datid {
+  background: var(--datid);
+}
+
+.framtid {
+  background: var(--framtid);
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.value {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 16px 0;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: black;
+}
+
+.total {
+  text-align: center;
+  margin-top: 35px;
+  font-size: 28px;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<h1>Hur fördelar du din tid, utvecklingskraft och dina resurser?</h1>
+
+<p class="subtitle">
+Du har totalt 100 % att fördela mellan Dåtid, Nutid och Framtid.
+</p>
+
+<div class="cards">
+
+<div class="card nutid">
+<h2>1. Nutid</h2>
+<p><strong>Förbättra det vi gör idag</strong></p>
+
+<div class="value" id="v1">34%</div>
+<input type="range" id="box1" min="0" max="100" value="34">
+</div>
+
+<div class="card datid">
+<h2>2. Dåtid</h2>
+<p><strong>Sluta med det som inte längre behövs</strong></p>
+
+<div class="value" id="v2">33%</div>
+<input type="range" id="box2" min="0" max="100" value="33">
+</div>
+
+<div class="card framtid">
+<h2>3. Framtid</h2>
+<p><strong>Utforska och bygga för framtiden</strong></p>
+
+<div class="value" id="v3">33%</div>
+<input type="range" id="box3" min="0" max="100" value="33">
+</div>
+
+</div>
+
+<div class="total">
+Totalt: 100 %
+</div>
+
+</div>
+
+<script>
+
+const sliders = [
+  document.getElementById("box1"),
+  document.getElementById("box2"),
+  document.getElementById("box3")
+];
+
+function updateDisplay() {
+
+  document.getElementById("v1").innerText =
+    sliders[0].value + "%";
+
+  document.getElementById("v2").innerText =
+    sliders[1].value + "%";
+
+  document.getElementById("v3").innerText =
+    sliders[2].value + "%";
+}
+
+function rebalance(activeIndex){
+
+  let total = sliders.reduce(
+    (sum, s) => sum + Number(s.value),
+    0
+  );
+
+  if (total === 100) {
+    updateDisplay();
+    return;
+  }
+
+  let difference = total - 100;
+
+  let others = [0,1,2].filter(
+    i => i !== activeIndex
+  );
+
+  while (difference !== 0) {
+
+    let adjusted = false;
+
+    for (let i of others) {
+
+      let current = Number(sliders[i].value);
+
+      if (difference > 0) {
+
+        if (current > 0) {
+          sliders[i].value = current - 1;
+          difference--;
+          adjusted = true;
+        }
+
+      } else {
+
+        if (current < 100) {
+          sliders[i].value = current + 1;
+          difference++;
+          adjusted = true;
+        }
+
+      }
+
+      if (difference === 0) {
+        break;
+      }
+    }
+
+    if (!adjusted) {
+      break;
+    }
+  }
+
+  updateDisplay();
+}
+
+sliders.forEach((slider, index) => {
+
+  slider.addEventListener(
+    "input",
+    () => rebalance(index)
+  );
+
+});
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>
